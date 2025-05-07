@@ -13,7 +13,6 @@ import personal.GesundKlinik.modules.doctor.mapper.IDoctorMapper;
 import personal.GesundKlinik.modules.doctor.query.IDoctorQueryService;
 import personal.GesundKlinik.modules.doctor.service.IDoctorService;
 
-
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.CREATED;
@@ -34,9 +33,8 @@ public class DoctorController {
     public SaveDoctorResponse save(@RequestBody @Valid final SaveDoctorRequest request){
         var entity = mapper.toEntity(request);
         var savedEntity = service.save(entity);
-        return mapper.toSaveResponse(entity);
+        return mapper.toSaveResponse(savedEntity);
     }
-
 
     @GetMapping("{id}")
     public DetailDoctorResponse findById(@PathVariable final Long id){

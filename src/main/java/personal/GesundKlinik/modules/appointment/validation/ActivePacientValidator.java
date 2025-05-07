@@ -8,7 +8,7 @@ import personal.GesundKlinik.shared.exception.ValidationException;
 
 @Component
 @RequiredArgsConstructor
-public class ActivePacientValidator implements IAppointmentValidator{
+public class ActivePacientValidator implements IAppointmentValidator {
 
     private final IAppointmentQueryService queryService;
 
@@ -23,6 +23,5 @@ public class ActivePacientValidator implements IAppointmentValidator{
         if (!activePacient){
             throw new ValidationException("An appointment can not be schedule without an active pacient.");
         }
-
     }
 }

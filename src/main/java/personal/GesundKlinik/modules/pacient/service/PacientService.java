@@ -28,18 +28,20 @@ public class PacientService implements IPacientService{
     @Transactional
     @Override
     public Pacient update(Pacient entity) {
-        queryService.verifyEmail(entity.getId(), entity.getEmail());
-        queryService.verifyPhone(entity.getId(), entity.getPhone());
-
         var stored = queryService.findById(entity.getId());
+
         if (entity.getName() != null)
             stored.setName(entity.getName());
 
-        if (entity.getEmail() != null)
+        if (entity.getEmail() != null && !entity.getEmail().equals(stored.getEmail())) {
+            queryService.verifyEmail(entity.getId(), entity.getEmail());
             stored.setEmail(entity.getEmail());
+        }
 
-        if (entity.getPhone() != null)
+        if (entity.getPhone() != null && !entity.getPhone().equals(stored.getPhone())) {
+            queryService.verifyPhone(entity.getId(), entity.getPhone());
             stored.setPhone(entity.getPhone());
+        }
 
         if (entity.getAddress() != null)
             stored.setAddress(entity.getAddress());
@@ -52,6 +54,7 @@ public class PacientService implements IPacientService{
     public void softDelete(Long id) {
         Pacient pacient = queryService.findById(id);
         pacient.deactivate();
+        repository.save(pacient);
     }
 
 }

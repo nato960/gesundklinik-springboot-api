@@ -1,5 +1,6 @@
 package personal.GesundKlinik.modules.pacient.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import personal.GesundKlinik.modules.doctor.entity.Speciality;
 import personal.GesundKlinik.shared.dto.AddressDto;
@@ -14,7 +15,8 @@ public record DetailPacientResponse(@JsonProperty("id")
                                     String email,
                                     @JsonProperty("cpf")
                                     String cpf,
-                                    @JsonProperty("birthDate")
+                                    @JsonProperty("birth_date")
+                                    @JsonFormat(pattern = "yyyy-MM-dd")
                                     LocalDate birthDate,
                                     @JsonProperty("phone")
                                     String phone,

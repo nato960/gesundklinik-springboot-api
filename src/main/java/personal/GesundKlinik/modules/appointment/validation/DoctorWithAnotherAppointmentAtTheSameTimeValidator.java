@@ -8,20 +8,32 @@ import personal.GesundKlinik.shared.exception.ValidationException;
 
 @Component
 @RequiredArgsConstructor
-public class DoctorWithAnotherAppointmentAtTheSameTimeValidator implements IAppointmentValidator{
+public class DoctorWithAnotherAppointmentAtTheSameTimeValidator implements IAppointmentValidator {
 
     private final IAppointmentQueryService queryService;
 
     @Override
     public void validate(Appointment entity) {
 
-        var doctorHasAnotherAppointmentAtTheSameTime = queryService.existsByDoctorIdAndDateAndCancellationReasonIsNull(
-                entity.getDoctor().getId(),
-                entity.getDate());
+        boolean doctorHasAnotherAppointment;
 
-        if (doctorHasAnotherAppointmentAtTheSameTime){
-            throw new ValidationException("Doctor already has an appointment at this time.");
+        if (entity.getId() == null) {
+            // schedule
+            doctorHasAnotherAppointment = queryService.existsByDoctorIdAndDateAndCancellationReasonIsNull(
+                    entity.getDoctor().getId(),
+                    entity.getDate()
+            );
+        } else {
+            // reschedule
+            doctorHasAnotherAppointment = queryService.existsByDoctorIdAndDateAndCancellationReasonIsNullAndIdNot(
+                    entity.getDoctor().getId(),
+                    entity.getDate(),
+                    entity.getId()
+            );
         }
 
+        if (doctorHasAnotherAppointment) {
+            throw new ValidationException("Doctor already has an appointment at this time.");
+        }
     }
 }

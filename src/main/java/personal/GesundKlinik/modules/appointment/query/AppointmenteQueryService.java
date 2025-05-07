@@ -48,6 +48,16 @@ public class AppointmenteQueryService implements IAppointmentQueryService{
     }
 
     @Override
+    public boolean existsByDoctorIdAndDateAndCancellationReasonIsNullAndIdNot(Long doctorId, LocalDateTime date, Long idAppointment) {
+        return appointmentRepository.existsByDoctorIdAndDateAndCancellationReasonIsNullAndIdNot(doctorId, date, idAppointment);
+    }
+
+    @Override
+    public boolean existsByPacientIdAndDateBetweenAndIdNot(Long idPacient, LocalDateTime openAt, LocalDateTime closedAt, Long idAppointment) {
+        return appointmentRepository.existsByPacientIdAndDateBetweenAndIdNot(idPacient, openAt, closedAt, idAppointment);
+    }
+
+    @Override
     public boolean existsByPacientIdAndDateBetween(Long idPacient, LocalDateTime firstHour, LocalDateTime lastHour) {
         return appointmentRepository.existsByPacientIdAndDateBetween(idPacient, firstHour, lastHour);
     }
@@ -60,16 +70,6 @@ public class AppointmenteQueryService implements IAppointmentQueryService{
     @Override
     public boolean isPacientActive(Long id) {
         return pacientRepository.findActiveById(id);
-    }
-
-    @Override
-    public boolean hasDoctorAppointmentAt(Long idDoctor, LocalDateTime date) {
-        return appointmentRepository.existsByDoctorIdAndDateAndCancellationReasonIsNull(idDoctor, date);
-    }
-
-    @Override
-    public boolean hasPacientAppointmentOnDate(Long idPacient, LocalDateTime start, LocalDateTime end) {
-        return appointmentRepository.existsByPacientIdAndDateBetween(idPacient, start, end);
     }
 
 

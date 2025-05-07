@@ -1,6 +1,8 @@
 package personal.GesundKlinik.modules.appointment.service;
 
+import jakarta.transaction.Transactional;
 import personal.GesundKlinik.modules.appointment.entity.Appointment;
+import personal.GesundKlinik.modules.appointment.entity.CancellationReason;
 
 public interface IAppointmentService {
 
@@ -8,8 +10,5 @@ public interface IAppointmentService {
 
     Appointment reschedule(final Appointment entity);
 
-    void cancelAppointment(final Long id);
-
-
-
+    Appointment cancelAppointment(Appointment entity);
 }

@@ -8,13 +8,12 @@ import personal.GesundKlinik.shared.exception.ValidationException;
 
 @Component
 @RequiredArgsConstructor
-public class ActiveDoctorValidator implements IAppointmentValidator{
+public class ActiveDoctorValidator implements IAppointmentValidator {
 
     private final IAppointmentQueryService queryService;
 
     @Override
     public void validate(Appointment entity) {
-
 
         if (entity.getDoctor().getId() == null){
             return;

@@ -1,5 +1,6 @@
 package personal.GesundKlinik.modules.doctor.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
@@ -21,7 +22,8 @@ public record SaveDoctorRequest(@NotBlank
                                 @JsonProperty("crm")
                                 String crm,
                                 @NotNull
-                                @JsonProperty("birthDate")
+                                @JsonProperty("birth_date")
+                                @JsonFormat(pattern = "yyyy-MM-dd")
                                 LocalDate birthDate,
                                 @NotBlank
                                 @JsonProperty("phone")

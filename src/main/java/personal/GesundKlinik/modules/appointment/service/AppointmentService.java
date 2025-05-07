@@ -9,7 +9,7 @@ import personal.GesundKlinik.modules.appointment.repository.IAppointmentReposito
 import personal.GesundKlinik.modules.appointment.validation.IAppointmentValidator;
 import personal.GesundKlinik.modules.doctor.query.IDoctorQueryService;
 import personal.GesundKlinik.modules.pacient.query.IPacientQueryService;
-import personal.GesundKlinik.shared.exception.MissingPacientException;
+import personal.GesundKlinik.shared.exception.InvalidPacientIdException;
 import personal.GesundKlinik.shared.exception.NoDoctorAvailableOnThisDateException;
 import personal.GesundKlinik.shared.exception.NoSpecialityChosenException;
 
@@ -22,23 +22,23 @@ public class AppointmentService implements IAppointmentService{
     private final IAppointmentRepository appointmentRepository;
     private final IDoctorQueryService doctorQueryService;
     private final IPacientQueryService pacientQueryService;
-    private final IAppointmentQueryService queryService;
-    private final List<IAppointmentValidator> appointmentScheduleValidators;
+    private final IAppointmentQueryService appointmentQueryService;
+    private final List<IAppointmentValidator> appointmentValidators;
 
     @Transactional
     @Override
     public Appointment schedule(Appointment entity) {
 
         if (entity.getDoctor() != null && entity.getDoctor().getId() != null) {
-            queryService.verifyDoctorExists(entity.getDoctor().getId());
+            appointmentQueryService.verifyDoctorExists(entity.getDoctor().getId());
         }
 
         if (entity.getPacient() == null || entity.getPacient().getId() == null) {
-            throw new MissingPacientException("A patient must be provided with a valid ID.");
+            throw new InvalidPacientIdException("A patient must be provided with a valid ID.");
         }
-        queryService.verifyPacientExists(entity.getPacient().getId());
+        appointmentQueryService.verifyPacientExists(entity.getPacient().getId());
 
-        appointmentScheduleValidators.forEach(v -> v.validate(entity));
+        appointmentValidators.forEach(v -> v.validate(entity));
 
         var pacient = pacientQueryService.getReferenceById(entity.getPacient().getId());
         entity.setPacient(pacient);
@@ -50,34 +50,39 @@ public class AppointmentService implements IAppointmentService{
 
     @Transactional
     @Override
-    public Appointment reschedule(Appointment entity) {
+    public Appointment reschedule(Appointment entityToUpdate) {
 
-//        queryService.verifyEmail(entity.getId(), entity.getEmail());
-//        queryService.verifyPhone(entity.getId(), entity.getPhone());
-//
-//        var stored = queryService.findById(entity.getId());
-//        if (entity.getName() != null)
-//            stored.setName(entity.getName());
-//
-//        if (entity.getEmail() != null)
-//            stored.setEmail(entity.getEmail());
-//
-//        if (entity.getPhone() != null)
-//            stored.setPhone(entity.getPhone());
-//
-//        if (entity.getAddress() != null)
-//            stored.setAddress(entity.getAddress());
-//
-//        return repository.save(stored);
+        var stored = appointmentQueryService.findById(entityToUpdate.getId());
 
-        return null;
+        if (entityToUpdate.getPacient() != null && !entityToUpdate.getPacient().getId().equals(stored.getPacient().getId())) {
+            throw new InvalidPacientIdException("The patient of an appointment cannot be changed.");
+        }
+
+        if (entityToUpdate.getDoctor() != null && entityToUpdate.getDoctor().getId() != null){
+            appointmentQueryService.verifyDoctorExists(entityToUpdate.getDoctor().getId());
+            var doctor = doctorQueryService.getReferenceById(entityToUpdate.getDoctor().getId());
+            stored.setDoctor(doctor);
+        }
+
+        if (entityToUpdate.getDate() != null){
+            stored.setDate(entityToUpdate.getDate());
+        }
+
+        appointmentValidators.forEach(v -> v.validate(stored));
+
+        return appointmentRepository.save(stored);
     }
 
     @Transactional
     @Override
-    public void cancelAppointment(Long id) {
+    public Appointment cancelAppointment(Appointment entity) {
+        var existingAppointment = appointmentQueryService.findById(entity.getId());
 
+        existingAppointment.setCancellationReason(entity.getCancellationReason());
+
+        return appointmentRepository.save(existingAppointment);
     }
+
 
     private void assignDoctorIfNeeded(Appointment entity) {
         if (entity.getDoctor() != null && entity.getDoctor().getId() != null) {

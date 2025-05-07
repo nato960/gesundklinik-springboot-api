@@ -9,7 +9,7 @@ import java.time.DayOfWeek;
 
 @Component
 @RequiredArgsConstructor
-public class ScheduleAtOpeningTheHoursClinicValidator implements IAppointmentValidator{
+public class AtOpeningHoursClinicValidator implements IAppointmentValidator {
 
     @Override
     public void validate(Appointment entity) {

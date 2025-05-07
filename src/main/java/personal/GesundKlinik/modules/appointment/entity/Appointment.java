@@ -40,18 +40,5 @@ public class Appointment {
     @Enumerated(EnumType.STRING)
     private CancellationReason cancellationReason;
 
-//    public Appointment(Long id, Doctor doctor, Pacient pacient, LocalDateTime date) {
-//        this.id = id;
-//        this.doctor = doctor;
-//        this.pacient = pacient;
-//        this.date = date;
-//    }
-
-//    public void reschedule(AppointmentUpdateDto dto) {
-//        if (dto.date() != null) {
-//            this.date = dto.date();
-//        }
-//    }
-
 }
 

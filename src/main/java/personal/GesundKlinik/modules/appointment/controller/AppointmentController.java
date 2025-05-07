@@ -2,49 +2,56 @@ package personal.GesundKlinik.modules.appointment.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import jakarta.transaction.Transactional;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import personal.GesundKlinik.modules.appointment.service.AppointmentService;
+import personal.GesundKlinik.modules.appointment.dto.request.AppointmentCancellationRequest;
+import personal.GesundKlinik.modules.appointment.dto.request.AppointmentRescheduleRequest;
+import personal.GesundKlinik.modules.appointment.dto.response.AppointmentCancellationResponse;
+import personal.GesundKlinik.modules.appointment.dto.response.AppointmentRescheduleResponse;
+import personal.GesundKlinik.modules.appointment.dto.response.AppointmentScheduledResponse;
+import personal.GesundKlinik.modules.appointment.dto.request.AppointmentScheduleRequest;
+import personal.GesundKlinik.modules.appointment.dto.response.DetailsAppointmentResponse;
+import personal.GesundKlinik.modules.appointment.mapper.IAppointmentMapper;
+import personal.GesundKlinik.modules.appointment.query.IAppointmentQueryService;
+import personal.GesundKlinik.modules.appointment.service.IAppointmentService;
 
-import java.net.URI;
+import static org.springframework.http.HttpStatus.CREATED;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/appointments")
 public class AppointmentController {
 
-    final private AppointmentService appointmentService;
+    private final IAppointmentService service;
+    private final IAppointmentQueryService queryService;
+    private final IAppointmentMapper mapper;
 
 
-//    @PostMapping
-//    @Transactional
-//    public ResponseEntity create(@RequestBody AppointmentCreateDto dto) {
-//        var appointmentCreated = appointmentService.create(dto);
-//
-//        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-//                .path("/appointments/{id}")
-//                .buildAndExpand(appointmentCreated.id())
-//                .toUri();
-//
-//        return ResponseEntity.created(location).body(appointmentCreated);
-//    }
-//
-//    @GetMapping("/{id}")
-//    public ResponseEntity findById(@PathVariable Long id){
-//        var appointmentAdded = appointmentService.findById(id);
-//        return ResponseEntity.ok(new AppointmentDetailsDto(appointmentAdded));
-//    }
-//
-//    @PutMapping
-//    @Transactional
-//    public ResponseEntity reschedule(@RequestBody @Valid AppointmentUpdateDto dto){
-//        var appointmentToUpdate = appointmentService.findById(dto.id());
-//        appointmentToUpdate.reschedule(dto);
-//        return ResponseEntity.ok(new AppointmentDetailsDto(appointmentToUpdate));
-//    }
+    @PostMapping
+    @ResponseStatus(CREATED)
+    public AppointmentScheduledResponse save(@RequestBody @Valid final AppointmentScheduleRequest request){
+        var entity = mapper.toEntity(request);
+        var savedEntity = service.schedule(entity);
+        return mapper.toSaveResponse(savedEntity);
+    }
 
+    @GetMapping("{id}")
+    public DetailsAppointmentResponse findById(@PathVariable final Long id){
+        var entity = queryService.findById(id);
+        return mapper.toDetailsResponse(entity);
+    }
+
+    @PutMapping("{id}")
+    public AppointmentRescheduleResponse update(@PathVariable final Long id, @RequestBody @Valid final AppointmentRescheduleRequest request){
+        var entity = mapper.toEntity(id, request);
+        var updatedEntity = service.reschedule(entity);
+        return mapper.toRescheduleResponse(updatedEntity);
+    }
+
+    @PutMapping("{id}/cancellation")
+    public AppointmentCancellationResponse cancel(@PathVariable final Long id, @RequestBody @Valid final AppointmentCancellationRequest request){
+        var entity = mapper.toEntity(id, request);
+        var updatedEntity = service.cancelAppointment(entity);
+        return mapper.toCancellationResponse(updatedEntity);
+    }
 
 }

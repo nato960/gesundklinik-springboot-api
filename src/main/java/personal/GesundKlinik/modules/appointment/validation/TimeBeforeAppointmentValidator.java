@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 @Component
 @RequiredArgsConstructor
-public class TimeBeforeAppointmentValidator implements IAppointmentValidator{
+public class TimeBeforeAppointmentValidator implements IAppointmentValidator {
 
     @Override
     public void validate(Appointment entity) {

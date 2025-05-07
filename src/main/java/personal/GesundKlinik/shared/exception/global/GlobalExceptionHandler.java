@@ -13,9 +13,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import personal.GesundKlinik.shared.dto.ProblemResponse;
-import personal.GesundKlinik.shared.exception.EmailInUseException;
-import personal.GesundKlinik.shared.exception.NotFoundException;
-import personal.GesundKlinik.shared.exception.PhoneInUseException;
+import personal.GesundKlinik.shared.exception.*;
 
 import java.time.OffsetDateTime;
 import java.util.stream.Collectors;
@@ -27,7 +25,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({
             EmailInUseException.class,
-            PhoneInUseException.class
+            PhoneInUseException.class,
+            ValidationException.class,
+            NoSpecialityChosenException.class,
+            NoDoctorAvailableOnThisDateException.class,
+            InvalidPacientIdException.class
     })
     public ResponseEntity<Object> handleConflict(RuntimeException ex, WebRequest request) {
         log.warn("Conflict: {}", ex.getMessage());
@@ -58,7 +60,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     ) {
         // Extrai os erros de validação dos campos
         String message = ex.getBindingResult().getFieldErrors().stream()
-                .map(error -> String.format("Campo '%s': %s", error.getField(), error.getDefaultMessage()))
+                .map(error -> String.format("Field '%s': %s", error.getField(), error.getDefaultMessage()))
                 .collect(Collectors.joining("; "));
 
         // Cria o corpo da resposta padronizada

@@ -18,15 +18,15 @@ public interface IAppointmentQueryService {
 
     boolean existsByDoctorIdAndDateAndCancellationReasonIsNull(Long idDoctor, LocalDateTime date);
 
+    boolean existsByDoctorIdAndDateAndCancellationReasonIsNullAndIdNot(Long doctorId, LocalDateTime date, Long idAppointment);
+
     boolean existsByPacientIdAndDateBetween(Long idPacient, LocalDateTime firstHour, LocalDateTime lastHour);
+
+    boolean existsByPacientIdAndDateBetweenAndIdNot(Long idPacient, LocalDateTime openAt, LocalDateTime closedAt, Long idAppointment);
 
     boolean isDoctorActive(Long id);
 
     boolean isPacientActive(Long id);
-
-    boolean hasDoctorAppointmentAt(Long idDoctor, LocalDateTime date);
-
-    boolean hasPacientAppointmentOnDate(Long idPacient, LocalDateTime start, LocalDateTime end);
 
 
 
