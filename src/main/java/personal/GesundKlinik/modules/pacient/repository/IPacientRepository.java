@@ -29,6 +29,6 @@ public interface IPacientRepository extends JpaRepository<Pacient, Long> {
             where
             p.id = :id
             """)
-    Boolean findActiveById(Long id);
+    Boolean findActiveById(final Long id);
 
 }

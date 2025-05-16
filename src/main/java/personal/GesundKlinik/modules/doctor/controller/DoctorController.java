@@ -1,5 +1,6 @@
 package personal.GesundKlinik.modules.doctor.controller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -18,9 +19,10 @@ import java.util.List;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 
-@RequiredArgsConstructor
 @RestController
 @RequestMapping("/doctors")
+@RequiredArgsConstructor
+@SecurityRequirement(name = "bearer-key")
 public class DoctorController {
 
     private final IDoctorService service;

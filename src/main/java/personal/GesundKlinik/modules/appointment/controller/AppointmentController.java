@@ -1,5 +1,6 @@
 package personal.GesundKlinik.modules.appointment.controller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -16,9 +17,11 @@ import personal.GesundKlinik.modules.appointment.service.IAppointmentService;
 
 import static org.springframework.http.HttpStatus.CREATED;
 
-@RequiredArgsConstructor
+
 @RestController
 @RequestMapping("/appointments")
+@RequiredArgsConstructor
+@SecurityRequirement(name = "bearer-key")
 public class AppointmentController {
 
     private final IAppointmentService service;

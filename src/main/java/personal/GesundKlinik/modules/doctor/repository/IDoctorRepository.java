@@ -41,7 +41,7 @@ public interface IDoctorRepository extends JpaRepository<Doctor, Long> {
             order by rand()
             limit 1
             """)
-    Doctor chooseRandomDoctorFreeOnDate(Speciality speciality, LocalDateTime date);
+    Doctor chooseRandomDoctorFreeOnDate(final Speciality speciality, final LocalDateTime date);
 
 
     @Query("""
@@ -49,6 +49,6 @@ public interface IDoctorRepository extends JpaRepository<Doctor, Long> {
             where
             d.id = :id
             """)
-    Boolean findActiveById(Long id);
+    Boolean findActiveById(final Long id);
 
 }

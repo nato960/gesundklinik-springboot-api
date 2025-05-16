@@ -1,6 +1,6 @@
 package personal.GesundKlinik.modules.appointment.service;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import personal.GesundKlinik.modules.appointment.entity.Appointment;
@@ -15,8 +15,8 @@ import personal.GesundKlinik.shared.exception.NoSpecialityChosenException;
 
 import java.util.List;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class AppointmentService implements IAppointmentService{
 
     private final IAppointmentRepository appointmentRepository;

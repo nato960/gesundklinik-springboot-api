@@ -12,7 +12,7 @@ public interface IDoctorQueryService {
 
     Doctor findById(final Long id);
 
-    Doctor getReferenceById(Long id);
+    Doctor getReferenceById(final Long id);
 
     List<Doctor> list();
 
@@ -26,6 +26,6 @@ public interface IDoctorQueryService {
 
     void verifyEmail(final Long id,final String email);
 
-    Doctor chooseRandomDoctorFreeOnDate(Speciality speciality, LocalDateTime date);
+    Doctor chooseRandomDoctorFreeOnDate(final Speciality speciality, final LocalDateTime date);
 
 }

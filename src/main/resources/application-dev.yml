@@ -31,3 +31,8 @@ spring:
   logging:
     level:
       org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping: DEBUG
+
+api:
+  security:
+    token:
+      secret: ${JWT_SECRET:OAJIOh7h5HWSUIBAUIHApuhH}

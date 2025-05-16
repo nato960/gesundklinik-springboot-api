@@ -7,7 +7,6 @@ import java.util.List;
 
 public interface IAppointmentQueryService {
 
-
     void verifyDoctorExists(final Long id);
 
     void verifyPacientExists(final Long id);

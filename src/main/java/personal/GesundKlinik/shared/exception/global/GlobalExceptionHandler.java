@@ -18,7 +18,7 @@ import personal.GesundKlinik.shared.exception.*;
 import java.time.OffsetDateTime;
 import java.util.stream.Collectors;
 
-//"extends ResponseEntityExceptionHandler" permite herdar e customizar o comportamento padrão do Spring para exceções (ex: validações com @Valid).
+// "extends ResponseEntityExceptionHandler" allows inheriting and customizing Spring's default behavior for exceptions (e.g., validations with @Valid).
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
@@ -36,6 +36,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return buildResponse(ex, HttpStatus.UNPROCESSABLE_ENTITY, request);
     }
 
+    @ExceptionHandler(TokenException.class)
+    public ResponseEntity<Object> handleTokenException(TokenException ex, WebRequest request) {
+        log.error("Token error: {}", ex.getMessage());
+        return buildResponse(ex, HttpStatus.UNAUTHORIZED, request);
+    }
+
     @ExceptionHandler({
             NotFoundException.class
     })
@@ -50,7 +56,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return buildResponse(ex, HttpStatus.INTERNAL_SERVER_ERROR, request);
     }
 
-    //  Tratamento de validações com @Valid
+    //  Handling validations with @Valid
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex,
@@ -58,12 +64,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             HttpStatusCode status,
             WebRequest request
     ) {
-        // Extrai os erros de validação dos campos
+        // Extracts field validation errors
         String message = ex.getBindingResult().getFieldErrors().stream()
                 .map(error -> String.format("Field '%s': %s", error.getField(), error.getDefaultMessage()))
                 .collect(Collectors.joining("; "));
 
-        // Cria o corpo da resposta padronizada
+        // Creates the standardized response body
         var problem = ProblemResponse.builder()
                 .status(status.value()) // usa o status recebido (tipicamente 400)
                 .timestamp(OffsetDateTime.now())

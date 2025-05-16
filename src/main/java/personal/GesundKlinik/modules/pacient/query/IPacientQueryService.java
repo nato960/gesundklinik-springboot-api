@@ -11,7 +11,7 @@ public interface IPacientQueryService {
 
     Pacient findById(final Long id);
 
-    Pacient getReferenceById(Long id);
+    Pacient getReferenceById(final Long id);
 
     List<Pacient> list();
 
