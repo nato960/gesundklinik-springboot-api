@@ -1,6 +1,7 @@
 package personal.GesundKlinik.modules.auth.controller;
 
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,7 @@ import personal.GesundKlinik.modules.auth.service.IAuthService;
 
 @RestController
 @RequestMapping("/login")
+@Tag(name = "Auth")
 @RequiredArgsConstructor
 public class AuthenticationController {
 

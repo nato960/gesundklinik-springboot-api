@@ -1,6 +1,7 @@
 package personal.GesundKlinik.modules.user.controller;
 
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,7 @@ import static org.springframework.http.HttpStatus.CREATED;
 
 @RestController
 @RequestMapping("/users")
+@Tag(name = "Users")
 @RequiredArgsConstructor
 public class UserController {
 
