@@ -1,15 +1,14 @@
 package personal.GesundKlinik.shared.model;
 
 import jakarta.persistence.Embeddable;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import personal.GesundKlinik.shared.dto.AddressDto;
 
 @Setter
 @Getter
 @Embeddable
 @NoArgsConstructor
+@AllArgsConstructor
 public class Address {
 
     private String street;

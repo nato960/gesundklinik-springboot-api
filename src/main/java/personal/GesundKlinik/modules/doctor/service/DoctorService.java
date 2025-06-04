@@ -12,9 +12,9 @@ import personal.GesundKlinik.modules.doctor.repository.IDoctorRepository;
 @Service
 public class DoctorService implements IDoctorService{
 
-    final private IDoctorRepository repository;
-    final private IDoctorQueryService queryService;
+    private final IDoctorRepository repository;
 
+    private final IDoctorQueryService queryService;
 
     @Transactional
     @Override

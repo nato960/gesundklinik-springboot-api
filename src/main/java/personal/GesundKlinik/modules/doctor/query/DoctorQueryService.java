@@ -24,13 +24,13 @@ public class DoctorQueryService implements IDoctorQueryService{
     @Override
     public Doctor findById(Long id) {
         return repository.findById(id).orElseThrow(
-                () -> new NotFoundException("Doctor with ID " + id + " not found"));
+                () -> new NotFoundException("Doctor not found"));
     }
 
     @Override
     public Doctor getReferenceById(Long id) {
         if (!repository.existsById(id)) {
-            throw new NotFoundException("Doctor with ID " + id + " not found");
+            throw new NotFoundException("Doctor not found");
         }
         return repository.getReferenceById(id);
     }
@@ -48,7 +48,7 @@ public class DoctorQueryService implements IDoctorQueryService{
     @Override
     public void verifyPhone(String phone) {
         if (repository.existsByPhone(phone)) {
-            throw new PhoneInUseException("The phone " + phone + " is already in use");
+            throw new PhoneInUseException("This phone is already in use");
         }
     }
 
@@ -56,14 +56,14 @@ public class DoctorQueryService implements IDoctorQueryService{
     public void verifyPhone(Long id, String phone) {
         var optional = repository.findByPhone(phone);
         if (optional.isPresent() && optional.get().getId() != id) {
-            throw new PhoneInUseException("The phone " + phone + " is already in use");
+            throw new PhoneInUseException("This phone is already in use");
         }
     }
 
     @Override
     public void verifyEmail(String email) {
         if (repository.existsByEmail(email)) {
-            throw new EmailInUseException("The email " + email + " is already in use");
+            throw new EmailInUseException("This email is already in use");
         }
     }
 
@@ -71,7 +71,7 @@ public class DoctorQueryService implements IDoctorQueryService{
     public void verifyEmail(Long id, String email) {
         var optional = repository.findByEmail(email);
         if (optional.isPresent() && !Objects.equals(optional.get().getId(), id)) {
-            throw new EmailInUseException("The email " + email + " is already in use");
+            throw new EmailInUseException("This email is already in use");
         }
     }
 

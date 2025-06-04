@@ -8,12 +8,12 @@ import personal.GesundKlinik.modules.pacient.entity.Pacient;
 import personal.GesundKlinik.modules.pacient.query.IPacientQueryService;
 import personal.GesundKlinik.modules.pacient.repository.IPacientRepository;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class PacientService implements IPacientService{
 
-    final private IPacientRepository repository;
-    final private IPacientQueryService queryService;
+    private final IPacientRepository repository;
+    private final IPacientQueryService queryService;
 
 
     @Transactional

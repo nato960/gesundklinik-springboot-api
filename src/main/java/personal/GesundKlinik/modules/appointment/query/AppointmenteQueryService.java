@@ -21,7 +21,7 @@ public class AppointmenteQueryService implements IAppointmentQueryService{
 
     public Appointment findById(Long id) {
         return appointmentRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Appointment with ID " + id + " not found"));
+                .orElseThrow(() -> new NotFoundException("Appointment not found"));
     }
 
     public List<Appointment> list(){
