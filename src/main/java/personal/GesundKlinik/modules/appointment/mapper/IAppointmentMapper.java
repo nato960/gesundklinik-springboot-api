@@ -20,16 +20,16 @@ public interface IAppointmentMapper {
     // Schedule
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "doctor.id", source = "idDoctor")
-    @Mapping(target = "pacient.id", source = "idPacient")
+    @Mapping(target = "patient.id", source = "idPatient")
     Appointment toEntity(final AppointmentScheduleRequest request);
 
     @Mapping(target = "idDoctor", source = "doctor.id")
-    @Mapping(target = "idPacient", source = "pacient.id")
+    @Mapping(target = "idPatient", source = "patient.id")
     AppointmentScheduledResponse toSaveResponse(final Appointment entity);
 
     // Details
     @Mapping(target = "idDoctor", source = "doctor.id")
-    @Mapping(target = "idPacient", source = "pacient.id")
+    @Mapping(target = "idPatient", source = "patient.id")
     DetailsAppointmentResponse toDetailsResponse(final Appointment entity);
 
     // Reschedule
@@ -38,7 +38,7 @@ public interface IAppointmentMapper {
     Appointment toEntity(final Long id, final AppointmentRescheduleRequest request);
 
     @Mapping(target = "idDoctor", source = "doctor.id")
-    @Mapping(target = "idPacient", source = "pacient.id")
+    @Mapping(target = "idPatient", source = "patient.id")
     AppointmentRescheduleResponse toRescheduleResponse(final Appointment entity);
 
     // Cancel
@@ -47,7 +47,7 @@ public interface IAppointmentMapper {
     Appointment toEntity(final Long id, final AppointmentCancellationRequest request);
 
     @Mapping(target = "idDoctor", source = "doctor.id")
-    @Mapping(target = "idPacient", source = "pacient.id")
+    @Mapping(target = "idPatient", source = "patient.id")
     AppointmentCancellationResponse toCancellationResponse(final Appointment entity);
 
 }

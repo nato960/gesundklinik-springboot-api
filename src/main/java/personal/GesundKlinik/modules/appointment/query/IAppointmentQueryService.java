@@ -9,7 +9,7 @@ public interface IAppointmentQueryService {
 
     void verifyDoctorExists(final Long id);
 
-    void verifyPacientExists(final Long id);
+    void verifyPatientExists(final Long id);
 
     Appointment findById(final Long id);
 
@@ -19,13 +19,13 @@ public interface IAppointmentQueryService {
 
     boolean existsByDoctorIdAndDateAndCancellationReasonIsNullAndIdNot(Long doctorId, LocalDateTime date, Long idAppointment);
 
-    boolean existsByPacientIdAndDateBetween(Long idPacient, LocalDateTime firstHour, LocalDateTime lastHour);
+    boolean existsByPatientIdAndDateBetween(Long idPatient, LocalDateTime firstHour, LocalDateTime lastHour);
 
-    boolean existsByPacientIdAndDateBetweenAndIdNot(Long idPacient, LocalDateTime openAt, LocalDateTime closedAt, Long idAppointment);
+    boolean existsByPatientIdAndDateBetweenAndIdNot(Long idPatient, LocalDateTime openAt, LocalDateTime closedAt, Long idAppointment);
 
     boolean isDoctorActive(Long id);
 
-    boolean isPacientActive(Long id);
+    boolean isPatientActive(Long id);
 
 
 

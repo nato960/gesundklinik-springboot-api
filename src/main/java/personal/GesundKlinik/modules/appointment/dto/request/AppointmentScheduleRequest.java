@@ -12,8 +12,8 @@ import java.time.LocalDateTime;
 public record AppointmentScheduleRequest(@JsonProperty("idDoctor")
                                          Long idDoctor,
                                          @NotNull
-                                         @JsonProperty("idPacient")
-                                         Long idPacient,
+                                         @JsonProperty("idPatient")
+                                         Long idPatient,
                                          @NotNull
                                          @Future
                                          @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")

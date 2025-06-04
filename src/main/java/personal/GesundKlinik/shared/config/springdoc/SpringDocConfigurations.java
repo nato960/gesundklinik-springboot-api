@@ -54,7 +54,7 @@ public class SpringDocConfigurations {
                         .description("Manage doctors data: register, update, deactivate, and view"))
                 .addTagsItem(new Tag()
                         .name("Pacients")
-                        .description("Manage pacients data: register, update, deactivate, and view"))
+                        .description("Manage patients data: register, update, deactivate, and view"))
                 .addTagsItem(new Tag()
                         .name("Appointments")
                         .description("Manage appointments: scheduling, rescheduling, cancellation, and consultation")

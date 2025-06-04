@@ -8,8 +8,8 @@ import personal.GesundKlinik.modules.appointment.query.IAppointmentQueryService;
 import personal.GesundKlinik.modules.appointment.repository.IAppointmentRepository;
 import personal.GesundKlinik.modules.appointment.validation.IAppointmentValidator;
 import personal.GesundKlinik.modules.doctor.query.IDoctorQueryService;
-import personal.GesundKlinik.modules.pacient.query.IPacientQueryService;
-import personal.GesundKlinik.shared.exception.InvalidPacientIdException;
+import personal.GesundKlinik.modules.patient.query.IPatientQueryService;
+import personal.GesundKlinik.shared.exception.InvalidPatientIdException;
 import personal.GesundKlinik.shared.exception.NoDoctorAvailableOnThisDateException;
 import personal.GesundKlinik.shared.exception.NoSpecialityChosenException;
 
@@ -21,7 +21,7 @@ public class AppointmentService implements IAppointmentService{
 
     private final IAppointmentRepository appointmentRepository;
     private final IDoctorQueryService doctorQueryService;
-    private final IPacientQueryService pacientQueryService;
+    private final IPatientQueryService pacientQueryService;
     private final IAppointmentQueryService appointmentQueryService;
     private final List<IAppointmentValidator> appointmentValidators;
 
@@ -33,15 +33,15 @@ public class AppointmentService implements IAppointmentService{
             appointmentQueryService.verifyDoctorExists(entity.getDoctor().getId());
         }
 
-        if (entity.getPacient() == null || entity.getPacient().getId() == null) {
-            throw new InvalidPacientIdException("A patient must be provided with a valid ID.");
+        if (entity.getPatient() == null || entity.getPatient().getId() == null) {
+            throw new InvalidPatientIdException("A patient must be provided with a valid ID.");
         }
-        appointmentQueryService.verifyPacientExists(entity.getPacient().getId());
+        appointmentQueryService.verifyPatientExists(entity.getPatient().getId());
 
         appointmentValidators.forEach(v -> v.validate(entity));
 
-        var pacient = pacientQueryService.getReferenceById(entity.getPacient().getId());
-        entity.setPacient(pacient);
+        var patient = pacientQueryService.getReferenceById(entity.getPatient().getId());
+        entity.setPatient(patient);
 
         assignDoctorIfNeeded(entity);
 
@@ -54,8 +54,8 @@ public class AppointmentService implements IAppointmentService{
 
         var stored = appointmentQueryService.findById(entityToUpdate.getId());
 
-        if (entityToUpdate.getPacient() != null && !entityToUpdate.getPacient().getId().equals(stored.getPacient().getId())) {
-            throw new InvalidPacientIdException("The patient of an appointment cannot be changed.");
+        if (entityToUpdate.getPatient() != null && !entityToUpdate.getPatient().getId().equals(stored.getPatient().getId())) {
+            throw new InvalidPatientIdException("The patient of an appointment cannot be changed.");
         }
 
         if (entityToUpdate.getDoctor() != null && entityToUpdate.getDoctor().getId() != null){

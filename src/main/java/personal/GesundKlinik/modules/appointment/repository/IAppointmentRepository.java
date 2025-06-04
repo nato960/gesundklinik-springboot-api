@@ -13,9 +13,9 @@ public interface IAppointmentRepository extends JpaRepository<Appointment, Long>
 
     boolean existsByDoctorIdAndDateAndCancellationReasonIsNullAndIdNot(Long doctorId, LocalDateTime date, Long idAppointment);
 
-    boolean existsByPacientIdAndDateBetween(Long idPacient, LocalDateTime firstHour, LocalDateTime lastHour);
+    boolean existsByPatientIdAndDateBetween(Long idPatient, LocalDateTime firstHour, LocalDateTime lastHour);
 
-    boolean existsByPacientIdAndDateBetweenAndIdNot(Long idPacient, LocalDateTime openAt, LocalDateTime closedAt, Long id);
+    boolean existsByPatientIdAndDateBetweenAndIdNot(Long idPatient, LocalDateTime openAt, LocalDateTime closedAt, Long id);
 
 
 

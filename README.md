@@ -29,7 +29,7 @@ Its layered and modular design ensures a clear separation of concerns, while sec
 ## 📂 Modular Structure:
 
 - `modules/doctor` – Doctor module
-- `modules/pacient` – Patient module
+- `modules/patient` – Patient module
 - `modules/appointment` – Appointment module
 - `shared/` – Shared components (DTOs, exceptions, security, config)
 

@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import personal.GesundKlinik.modules.appointment.entity.Appointment;
 import personal.GesundKlinik.modules.appointment.repository.IAppointmentRepository;
 import personal.GesundKlinik.modules.doctor.repository.IDoctorRepository;
-import personal.GesundKlinik.modules.pacient.repository.IPacientRepository;
+import personal.GesundKlinik.modules.patient.repository.IPatientRepository;
 import personal.GesundKlinik.shared.exception.NotFoundException;
 
 import java.time.LocalDateTime;
@@ -17,7 +17,7 @@ public class AppointmenteQueryService implements IAppointmentQueryService{
 
     private final IAppointmentRepository appointmentRepository;
     private final IDoctorRepository doctorRepository;
-    private final IPacientRepository pacientRepository;
+    private final IPatientRepository pacientRepository;
 
     public Appointment findById(Long id) {
         return appointmentRepository.findById(id)
@@ -29,7 +29,7 @@ public class AppointmenteQueryService implements IAppointmentQueryService{
     }
 
     @Override
-    public void verifyPacientExists(Long id) {
+    public void verifyPatientExists(Long id) {
         if (!pacientRepository.existsById(id)){
             throw new NotFoundException("ID " + id + " not found");
         }
@@ -53,13 +53,13 @@ public class AppointmenteQueryService implements IAppointmentQueryService{
     }
 
     @Override
-    public boolean existsByPacientIdAndDateBetweenAndIdNot(Long idPacient, LocalDateTime openAt, LocalDateTime closedAt, Long idAppointment) {
-        return appointmentRepository.existsByPacientIdAndDateBetweenAndIdNot(idPacient, openAt, closedAt, idAppointment);
+    public boolean existsByPatientIdAndDateBetweenAndIdNot(Long idPatient, LocalDateTime openAt, LocalDateTime closedAt, Long idAppointment) {
+        return appointmentRepository.existsByPatientIdAndDateBetweenAndIdNot(idPatient, openAt, closedAt, idAppointment);
     }
 
     @Override
-    public boolean existsByPacientIdAndDateBetween(Long idPacient, LocalDateTime firstHour, LocalDateTime lastHour) {
-        return appointmentRepository.existsByPacientIdAndDateBetween(idPacient, firstHour, lastHour);
+    public boolean existsByPatientIdAndDateBetween(Long idPacient, LocalDateTime firstHour, LocalDateTime lastHour) {
+        return appointmentRepository.existsByPatientIdAndDateBetween(idPacient, firstHour, lastHour);
     }
 
     @Override
@@ -68,7 +68,7 @@ public class AppointmenteQueryService implements IAppointmentQueryService{
     }
 
     @Override
-    public boolean isPacientActive(Long id) {
+    public boolean isPatientActive(Long id) {
         return pacientRepository.findActiveById(id);
     }
 

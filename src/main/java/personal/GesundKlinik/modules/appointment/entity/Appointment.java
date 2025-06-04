@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import personal.GesundKlinik.modules.doctor.entity.Doctor;
 import personal.GesundKlinik.modules.doctor.entity.Speciality;
-import personal.GesundKlinik.modules.pacient.entity.Pacient;
+import personal.GesundKlinik.modules.patient.entity.Patient;
 
 import java.time.LocalDateTime;
 
@@ -28,8 +28,8 @@ public class Appointment {
     private Doctor doctor;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "pacient_id")
-    private Pacient pacient;
+    @JoinColumn(name = "patient_id")
+    private Patient patient;
 
     private LocalDateTime date;
 
