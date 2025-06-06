@@ -39,9 +39,22 @@ public class Patient {
     private Boolean active;
 
 
-
     public void deactivate() {
         this.active = false;
+    }
+
+    public void updateWith(Patient updates) {
+        if (updates.getName() != null)
+            this.name = updates.getName();
+
+        if (updates.getEmail() != null && !updates.getEmail().equals(this.email))
+            this.email = updates.getEmail();
+
+        if (updates.getPhone() != null && !updates.getPhone().equals(this.phone))
+            this.phone = updates.getPhone();
+
+        if (updates.getAddress() != null)
+            this.address = updates.getAddress();
     }
 
 }

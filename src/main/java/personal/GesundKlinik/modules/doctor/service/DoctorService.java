@@ -30,21 +30,15 @@ public class DoctorService implements IDoctorService{
     public Doctor update(Doctor entity) {
         var stored = queryService.findById(entity.getId());
 
-        if (entity.getName() != null)
-            stored.setName(entity.getName());
-
         if (entity.getEmail() != null && !entity.getEmail().equals(stored.getEmail())) {
             queryService.verifyEmail(entity.getId(), entity.getEmail());
-            stored.setEmail(entity.getEmail());
         }
 
         if (entity.getPhone() != null && !entity.getPhone().equals(stored.getPhone())) {
             queryService.verifyPhone(entity.getId(), entity.getPhone());
-            stored.setPhone(entity.getPhone());
         }
 
-        if (entity.getAddress() != null)
-            stored.setAddress(entity.getAddress());
+        stored.updateWith(entity);
 
         return repository.save(stored);
     }

@@ -254,7 +254,6 @@ class DoctorServiceTest {
             when(queryService.findById(1L)).thenReturn(spyDoctor);
             when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
-
             // ACT
             service.softDelete(1L);
 

@@ -255,7 +255,7 @@ class PatientServiceTest {
         void shouldSoftDeletePatientSuccessfully() {
             // ARRANGE
             Patient spyPatient = spy(patient);
-            when(queryService.findById(1L)).thenReturn(patient);
+            when(queryService.findById(1L)).thenReturn(spyPatient);
             when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
             // ACT
