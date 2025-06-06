@@ -6,9 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InOrder;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import personal.GesundKlinik.modules.patient.entity.Patient;
 import personal.GesundKlinik.modules.patient.query.IPatientQueryService;
@@ -34,6 +32,9 @@ class PatientServiceTest {
     @InjectMocks
     private PatientService service;
 
+    @Captor
+    private ArgumentCaptor<Patient> patientCaptor;
+
     private Patient patient;
 
     @BeforeEach
@@ -51,8 +52,8 @@ class PatientServiceTest {
     class SaveTests {
 
         @Test
-        @DisplayName("Should successfully save patient when provided with valid data")
-        void shouldSavePacientSuccessfully(){
+        @DisplayName("Should save a new patient when provided with valid data")
+        void shouldSavePatientSuccessfully(){
             // ARRANGE
             when(repository.save(patient)).thenReturn(patient);
 
@@ -127,13 +128,18 @@ class PatientServiceTest {
             Patient updated = service.update(updates);
 
             // ASSERT
-            assertEquals("New Name", updated.getName());
-            assertThat(updated.getAddress()).usingRecursiveComparison().isEqualTo(updates.getAddress());
+            verify(repository).save(patientCaptor.capture());
+            Patient captured = patientCaptor.getValue();
 
-            verify(queryService).findById(1L);
+            assertEquals("New Name", captured.getName());
+            assertThat(updated.getAddress()).usingRecursiveComparison().isEqualTo(updates.getAddress());
+            assertSame(updated, captured);
+
+            InOrder inOrder = inOrder(queryService, repository);
+            inOrder.verify(queryService).findById(1L);
             verify(queryService, never()).verifyEmail(any(), any());
             verify(queryService, never()).verifyPhone(any(), any());
-            verify(repository).save(patient);
+            inOrder.verify(repository).save(captured);
         }
 
         @Test
@@ -152,15 +158,18 @@ class PatientServiceTest {
             Patient updated = service.update(updates);
 
             // ASSERT
+            verify(repository).save(patientCaptor.capture());
+            Patient captured = patientCaptor.getValue();
+
             assertEquals("newemail@email.com", updated.getEmail());
             assertEquals("111111111", updated.getPhone());
+            assertSame(captured, updated);
 
             InOrder inOrder = inOrder(queryService, repository);
-
             inOrder.verify(queryService).findById(1L);
             inOrder.verify(queryService).verifyEmail(1L, updates.getEmail());
             inOrder.verify(queryService).verifyPhone(1L, updates.getPhone());
-            inOrder.verify(repository).save(patient);
+            inOrder.verify(repository).save(captured);
         }
 
         @Test
@@ -242,25 +251,23 @@ class PatientServiceTest {
     class SoftDeleteTests {
 
         @Test
-        @DisplayName("Should deactivate and save patient when valid ID is provided")
+        @DisplayName("Should deactivate patient when valid ID is provided")
         void shouldSoftDeletePatientSuccessfully() {
             // ARRANGE
-            Patient toDeactivate = new Patient();
-            toDeactivate.setId(1L);
-            toDeactivate.setActive(true);
-
-            when(queryService.findById(1L)).thenReturn(toDeactivate);
+            Patient spyPatient = spy(patient);
+            when(queryService.findById(1L)).thenReturn(patient);
             when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
             // ACT
             service.softDelete(1L);
 
             // ASSERT
-            assertFalse(toDeactivate.getActive());
+            verify(repository).save(spyPatient);
+            assertFalse(spyPatient.getActive());
 
             InOrder inOrder = inOrder(queryService, repository);
             inOrder.verify(queryService).findById(1L);
-            inOrder.verify(repository).save(toDeactivate);
+            inOrder.verify(repository).save(spyPatient);
         }
 
         @Test
@@ -270,7 +277,9 @@ class PatientServiceTest {
             when(queryService.findById(1L)).thenThrow(new NotFoundException("Patient not found"));
 
             // ACT & ASSERT
-            assertThrows(NotFoundException.class, () -> service.softDelete(1L));
+            NotFoundException ex = assertThrows(NotFoundException.class,
+                    () -> service.softDelete(1L));
+            assertEquals("Patient not found", ex.getMessage());
 
             verify(queryService).findById(1L);
             verify(repository, never()).save(any());
