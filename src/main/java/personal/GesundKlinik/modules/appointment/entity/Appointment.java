@@ -8,6 +8,8 @@ import lombok.Setter;
 import personal.GesundKlinik.modules.doctor.entity.Doctor;
 import personal.GesundKlinik.modules.doctor.entity.Speciality;
 import personal.GesundKlinik.modules.patient.entity.Patient;
+import personal.GesundKlinik.shared.exception.DoctorAlreadyAssignedException;
+import personal.GesundKlinik.shared.exception.PatientAlreadyAssignedException;
 
 import java.time.LocalDateTime;
 
@@ -40,5 +42,28 @@ public class Appointment {
     @Enumerated(EnumType.STRING)
     private CancellationReason cancellationReason;
 
+
+    public void assignDoctor(Doctor doctor) {
+        if (this.doctor != null) {
+            throw new DoctorAlreadyAssignedException("Doctor has already been assigned.");
+        }
+        this.doctor = doctor;
+    }
+
+    public void assignPatient(Patient patient) {
+        if (this.patient != null) {
+            throw new PatientAlreadyAssignedException("Patient has already been assigned.");
+        }
+        this.patient = patient;
+    }
+
+    public void updateWith(Doctor doctor, LocalDateTime newDate) {
+        if (doctor != null) {
+            this.doctor = doctor;
+        }
+        if (newDate != null) {
+            this.date = newDate;
+        }
+    }
 }
 

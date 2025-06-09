@@ -52,7 +52,7 @@ class DoctorServiceTest {
 
         @Test
         @DisplayName("Should save a new doctor when email and phone are valid")
-        void shouldSaveDoctorSuccessfully() {
+        void shouldSaveDoctor_whenEmailAndPhoneAreValid() {
             // ARRANGE
             when(repository.save(doctor)).thenReturn(doctor);
 
@@ -70,7 +70,7 @@ class DoctorServiceTest {
 
         @Test
         @DisplayName("Should throw EmailInUseException when email is already in use")
-        void shouldThrowEmailInUseExceptionWhenEmailIsUsed() {
+        void shouldThrowEmailInUseException_whenEmailAlreadyUsed() {
             // ARRANGE
             doThrow(new EmailInUseException("This email is already in use"))
                     .when(queryService).verifyEmail(doctor.getEmail());
@@ -90,7 +90,7 @@ class DoctorServiceTest {
 
         @Test
         @DisplayName("Should throw PhoneInUseException when phone is already in use")
-        void shouldThrowPhoneInUseExceptionWhenPhoneIsUsed() {
+        void shouldThrowPhoneInUseException_whenPhoneAlreadyUsed() {
             // ARRANGE
             doNothing().when(queryService).verifyEmail(doctor.getEmail());
             doThrow(new PhoneInUseException("This phone is already in use"))
@@ -108,15 +108,40 @@ class DoctorServiceTest {
             verify(queryService).verifyPhone(doctor.getPhone());
             verify(repository, never()).save(any());
         }
-
     }
+
 
     @Nested
     class UpdateTests {
 
         @Test
-        @DisplayName("Should update doctor name and address when fields are provided")
-        void shouldUpdateNameAndAddressWhenProvided() {
+        @DisplayName("Should call updateWith() and save in correct order when name and address are updated")
+        void shouldCallUpdateWithAndSaveInOrder_whenUpdatingNameAndAddress() {
+            // ARRANGE
+            Doctor updates = new Doctor();
+            updates.setId(1L);
+            updates.setName("New Name");
+            updates.setAddress(new Address("New Street", "456", "New City", "TX", "22222222"));
+
+            Doctor spyDoctor = spy(doctor);
+            when(queryService.findById(1L)).thenReturn(spyDoctor);
+            when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+            // ACT
+            service.update(updates);
+
+            // ASSERT – behavior
+            InOrder inOrder = inOrder(queryService, spyDoctor, repository);
+            inOrder.verify(queryService).findById(1L);
+            verify(queryService, never()).verifyEmail(any(), any());
+            verify(queryService, never()).verifyPhone(any(), any());
+            inOrder.verify(spyDoctor).updateWith(updates);
+            inOrder.verify(repository).save(spyDoctor);
+        }
+
+        @Test
+        @DisplayName("Should persist doctor with updated name and address")
+        void shouldPersistUpdatedFields_whenUpdatingNameAndAddress() {
             // ARRANGE
             Doctor updates = new Doctor();
             updates.setId(1L);
@@ -129,24 +154,43 @@ class DoctorServiceTest {
             // ACT
             Doctor updated = service.update(updates);
 
-            // ASSERT
+            // ASSERT – final state
             verify(repository).save(doctorCaptor.capture());
             Doctor captured = doctorCaptor.getValue();
 
             assertEquals("New Name", captured.getName());
-            assertThat(updated.getAddress()).usingRecursiveComparison().isEqualTo(updates.getAddress());
+            assertThat(captured.getAddress()).usingRecursiveComparison().isEqualTo(updates.getAddress());
             assertSame(updated, captured);
-
-            InOrder inOrder = inOrder(queryService, repository);
-            inOrder.verify(queryService).findById(1L);
-            verify(queryService, never()).verifyEmail(any(), any());
-            verify(queryService, never()).verifyPhone(any(), any());
-            inOrder.verify(repository).save(captured);
         }
 
         @Test
-        @DisplayName("Should update email and phone when both are changed and available")
-        void shouldUpdateEmailAndPhoneWhenBothAreChangedAndAvailable() {
+        @DisplayName("Should call updateWith() and save in correct order when email and phone are updated")
+        void shouldCallUpdateWithAndSaveInOrder_whenUpdatingEmailAndPhone() {
+            // ARRANGE
+            Doctor updates = new Doctor();
+            updates.setId(1L);
+            updates.setEmail("newemail@email.com");
+            updates.setPhone("111111111");
+
+            Doctor spyDoctor = spy(doctor) ;
+            when(queryService.findById(1L)).thenReturn(spyDoctor);
+            when(repository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+
+            // ACT
+            service.update(updates);
+
+            // ASSERT
+            InOrder inOrder = inOrder(queryService, spyDoctor, repository);
+            inOrder.verify(queryService).findById(1L);
+            inOrder.verify(queryService).verifyEmail(1L, updates.getEmail());
+            inOrder.verify(queryService).verifyPhone(1L, updates.getPhone());
+            inOrder.verify(spyDoctor).updateWith(updates);
+            inOrder.verify(repository).save(spyDoctor);
+        }
+
+        @Test
+        @DisplayName("Should persist doctor with updated email and phone")
+        void shouldPersistUpdatedFields_whenUpdatingEmailAndPhone() {
             // ARRANGE
             Doctor updates = new Doctor();
             updates.setId(1L);
@@ -166,17 +210,11 @@ class DoctorServiceTest {
             assertEquals("newemail@email.com", captured.getEmail());
             assertEquals("111111111", captured.getPhone());
             assertSame(captured, updated);
-
-            InOrder inOrder = inOrder(queryService, repository);
-            inOrder.verify(queryService).findById(1L);
-            inOrder.verify(queryService).verifyEmail(1L, updates.getEmail());
-            inOrder.verify(queryService).verifyPhone(1L, updates.getPhone());
-            inOrder.verify(repository).save(captured);
         }
 
         @Test
-        @DisplayName("Should not update any field when input fields are null or equal to current values")
-        void shouldNotUpdateWhenFieldsAreNullOrEqual() {
+        @DisplayName("Should not update any field when all input fields are null or unchanged")
+        void shouldNotUpdateFields_whenAllFieldsAreNullOrUnchanged() {
             // ARRANGE
             Doctor updates = new Doctor();
             updates.setId(1L);
@@ -198,7 +236,7 @@ class DoctorServiceTest {
 
         @Test
         @DisplayName("Should throw EmailInUseException when trying to update with an email already in use")
-        void shouldThrowEmailInUseExceptionWhenEmailIsUsed() {
+        void shouldThrowEmailInUseException_whenUpdatingWithEmailAlreadyUsed() {
             // ARRANGE
             Doctor updates = new Doctor();
             updates.setId(1L);
@@ -210,7 +248,8 @@ class DoctorServiceTest {
 
             // ACT & ASSERT
             EmailInUseException ex = assertThrows(EmailInUseException.class,
-                    () -> service.update(updates));
+                    () -> service.update(updates)
+            );
 
             assertEquals("This email is already in use", ex.getMessage());
 
@@ -222,7 +261,7 @@ class DoctorServiceTest {
 
         @Test
         @DisplayName("Should throw PhoneInUseException when trying to update with a phone already in use")
-        void shouldThrowPhoneInUseExceptionWhenPhoneIsUsed() {
+        void shouldThrowPhoneInUseException_whenUpdatingWithPhoneAlreadyUsed() {
             // ARRANGE
             Doctor updates = new Doctor();
             updates.setId(1L);
@@ -248,7 +287,7 @@ class DoctorServiceTest {
 
         @Test
         @DisplayName("Should deactivate doctor when valid ID is provided")
-        void shouldSoftDeleteDoctorSuccessfully() {
+        void shouldDeactivateDoctor_whenValidIdProvided() {
             // ARRANGE
             Doctor spyDoctor = spy(doctor);
             when(queryService.findById(1L)).thenReturn(spyDoctor);
@@ -258,23 +297,25 @@ class DoctorServiceTest {
             service.softDelete(1L);
 
             // ASSERT
-            verify(spyDoctor).deactivate();
             assertFalse(spyDoctor.getActive());
 
-            InOrder inOrder = inOrder(queryService, repository);
+            InOrder inOrder = inOrder(queryService, spyDoctor, repository);
             inOrder.verify(queryService).findById(1L);
+            inOrder.verify(spyDoctor).deactivate();
             inOrder.verify(repository).save(spyDoctor);
         }
 
         @Test
         @DisplayName("Should throw exception if doctor not found during softDelete")
-        void shouldThrowExceptionIfDoctorNotFound() {
+        void shouldThrowNotFoundException_whenSoftDeleteAndDoctorDoesNotExist() {
             // ARRANGE
             when(queryService.findById(1L)).thenThrow(new NotFoundException("Doctor not found"));
 
             // ACT & ASSERT
             NotFoundException ex = assertThrows(NotFoundException.class,
-                    () -> service.softDelete(1L));
+                    () -> service.softDelete(1L)
+            );
+
             assertEquals("Doctor not found", ex.getMessage());
 
             verify(queryService).findById(1L);

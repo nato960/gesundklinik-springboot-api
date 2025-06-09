@@ -7,6 +7,7 @@ import personal.GesundKlinik.modules.appointment.entity.Appointment;
 import personal.GesundKlinik.modules.appointment.query.IAppointmentQueryService;
 import personal.GesundKlinik.modules.appointment.repository.IAppointmentRepository;
 import personal.GesundKlinik.modules.appointment.validation.IAppointmentValidator;
+import personal.GesundKlinik.modules.doctor.entity.Doctor;
 import personal.GesundKlinik.modules.doctor.query.IDoctorQueryService;
 import personal.GesundKlinik.modules.patient.query.IPatientQueryService;
 import personal.GesundKlinik.shared.exception.InvalidPatientIdException;
@@ -21,7 +22,7 @@ public class AppointmentService implements IAppointmentService{
 
     private final IAppointmentRepository appointmentRepository;
     private final IDoctorQueryService doctorQueryService;
-    private final IPatientQueryService pacientQueryService;
+    private final IPatientQueryService patientQueryService;
     private final IAppointmentQueryService appointmentQueryService;
     private final List<IAppointmentValidator> appointmentValidators;
 
@@ -38,12 +39,12 @@ public class AppointmentService implements IAppointmentService{
         }
         appointmentQueryService.verifyPatientExists(entity.getPatient().getId());
 
-        appointmentValidators.forEach(v -> v.validate(entity));
+        var patient = patientQueryService.getReferenceById(entity.getPatient().getId());
 
-        var patient = pacientQueryService.getReferenceById(entity.getPatient().getId());
-        entity.setPatient(patient);
-
+        entity.assignPatient(patient);
         assignDoctorIfNeeded(entity);
+
+        appointmentValidators.forEach(v -> v.validate(entity));
 
         return appointmentRepository.save(entity);
     }
@@ -58,15 +59,13 @@ public class AppointmentService implements IAppointmentService{
             throw new InvalidPatientIdException("The patient of an appointment cannot be changed.");
         }
 
+        Doctor doctor = null;
         if (entityToUpdate.getDoctor() != null && entityToUpdate.getDoctor().getId() != null){
             appointmentQueryService.verifyDoctorExists(entityToUpdate.getDoctor().getId());
-            var doctor = doctorQueryService.getReferenceById(entityToUpdate.getDoctor().getId());
-            stored.setDoctor(doctor);
+            doctor = doctorQueryService.getReferenceById(entityToUpdate.getDoctor().getId());
         }
 
-        if (entityToUpdate.getDate() != null){
-            stored.setDate(entityToUpdate.getDate());
-        }
+        stored.updateWith(doctor, entityToUpdate.getDate());
 
         appointmentValidators.forEach(v -> v.validate(stored));
 
@@ -87,7 +86,7 @@ public class AppointmentService implements IAppointmentService{
     private void assignDoctorIfNeeded(Appointment entity) {
         if (entity.getDoctor() != null && entity.getDoctor().getId() != null) {
             var doctor = doctorQueryService.getReferenceById(entity.getDoctor().getId());
-            entity.setDoctor(doctor);
+            entity.assignDoctor(doctor);
             return;
         }
 
@@ -100,7 +99,7 @@ public class AppointmentService implements IAppointmentService{
             throw new NoDoctorAvailableOnThisDateException("There is no doctor available on the chosen date.");
         }
 
-        entity.setDoctor(chosen);
+        entity.assignDoctor(chosen);
     }
 
 }

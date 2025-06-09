@@ -29,7 +29,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             ValidationException.class,
             NoSpecialityChosenException.class,
             NoDoctorAvailableOnThisDateException.class,
-            InvalidPatientIdException.class
+            InvalidPatientIdException.class,
+            DoctorAlreadyAssignedException.class,
+            PatientAlreadyAssignedException.class
     })
     public ResponseEntity<Object> handleConflict(RuntimeException ex, WebRequest request) {
         log.warn("Conflict: {}", ex.getMessage());

@@ -8,6 +8,7 @@ import personal.GesundKlinik.modules.doctor.entity.Doctor;
 import personal.GesundKlinik.modules.doctor.entity.Speciality;
 import personal.GesundKlinik.modules.doctor.repository.IDoctorRepository;
 import personal.GesundKlinik.shared.exception.EmailInUseException;
+import personal.GesundKlinik.shared.exception.NoDoctorAvailableOnThisDateException;
 import personal.GesundKlinik.shared.exception.NotFoundException;
 import personal.GesundKlinik.shared.exception.PhoneInUseException;
 
@@ -77,7 +78,10 @@ public class DoctorQueryService implements IDoctorQueryService{
 
     @Override
     public Doctor chooseRandomDoctorFreeOnDate(Speciality speciality, LocalDateTime date) {
-        return repository.chooseRandomDoctorFreeOnDate(speciality, date);
+        return repository.chooseRandomDoctorFreeOnDate(speciality, date)
+                .orElseThrow(() ->
+                        new NoDoctorAvailableOnThisDateException("No available doctor available on this date")
+                );
     }
 
 

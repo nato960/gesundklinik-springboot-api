@@ -41,7 +41,7 @@ public interface IDoctorRepository extends JpaRepository<Doctor, Long> {
             order by rand()
             limit 1
             """)
-    Doctor chooseRandomDoctorFreeOnDate(final Speciality speciality, final LocalDateTime date);
+    Optional<Doctor> chooseRandomDoctorFreeOnDate(final Speciality speciality, final LocalDateTime date);
 
 
     @Query("""
