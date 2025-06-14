@@ -77,7 +77,7 @@ public class AppointmentService implements IAppointmentService{
     public Appointment cancelAppointment(Appointment entity) {
         var existingAppointment = appointmentQueryService.findById(entity.getId());
 
-        existingAppointment.setCancellationReason(entity.getCancellationReason());
+        existingAppointment.cancelWithReason(entity.getCancellationReason());
 
         return appointmentRepository.save(existingAppointment);
     }

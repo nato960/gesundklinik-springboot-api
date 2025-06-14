@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.core.parameters.P;
 import personal.GesundKlinik.modules.patient.entity.Patient;
 import personal.GesundKlinik.modules.patient.query.IPatientQueryService;
 import personal.GesundKlinik.modules.patient.repository.IPatientRepository;

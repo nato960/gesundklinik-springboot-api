@@ -8,6 +8,7 @@ import lombok.Setter;
 import personal.GesundKlinik.modules.doctor.entity.Doctor;
 import personal.GesundKlinik.modules.doctor.entity.Speciality;
 import personal.GesundKlinik.modules.patient.entity.Patient;
+import personal.GesundKlinik.shared.exception.AppointmentAlreadyCancelledException;
 import personal.GesundKlinik.shared.exception.DoctorAlreadyAssignedException;
 import personal.GesundKlinik.shared.exception.PatientAlreadyAssignedException;
 
@@ -44,17 +45,18 @@ public class Appointment {
 
 
     public void assignDoctor(Doctor doctor) {
-        if (this.doctor != null) {
+        if (this.doctor == null || this.doctor.getId().equals(doctor.getId())) {
+            this.doctor = doctor;
+        } else
             throw new DoctorAlreadyAssignedException("Doctor has already been assigned.");
-        }
-        this.doctor = doctor;
     }
 
     public void assignPatient(Patient patient) {
-        if (this.patient != null) {
+        if (this.patient == null || this.patient.getId().equals(patient.getId())) {
+            this.patient = patient;
+        } else {
             throw new PatientAlreadyAssignedException("Patient has already been assigned.");
         }
-        this.patient = patient;
     }
 
     public void updateWith(Doctor doctor, LocalDateTime newDate) {
@@ -64,6 +66,16 @@ public class Appointment {
         if (newDate != null) {
             this.date = newDate;
         }
+    }
+
+    public void cancelWithReason(CancellationReason reason) {
+        if (reason == null) {
+            throw new IllegalArgumentException("Cancellation reason must not be null.");
+        }
+        if (this.cancellationReason != null) {
+            throw new AppointmentAlreadyCancelledException("This appointment has already been cancelled.");
+        }
+        this.cancellationReason = reason;
     }
 }
 
