@@ -4,6 +4,8 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import personal.GesundKlinik.modules.appointment.dto.request.AppointmentCancellationRequest;
 import personal.GesundKlinik.modules.appointment.dto.request.AppointmentRescheduleRequest;
@@ -16,14 +18,13 @@ import personal.GesundKlinik.modules.appointment.mapper.IAppointmentMapper;
 import personal.GesundKlinik.modules.appointment.query.IAppointmentQueryService;
 import personal.GesundKlinik.modules.appointment.service.IAppointmentService;
 
-import static org.springframework.http.HttpStatus.CREATED;
 
 
 @RestController
 @RequestMapping("/appointments")
-@Tag(name = "Appointments")
 @RequiredArgsConstructor
 @SecurityRequirement(name = "bearer-key")
+@Tag(name = "Appointments")
 public class AppointmentController {
 
     private final IAppointmentService service;
@@ -32,31 +33,48 @@ public class AppointmentController {
 
 
     @PostMapping
-    @ResponseStatus(CREATED)
-    public AppointmentScheduledResponse save(@RequestBody @Valid final AppointmentScheduleRequest request){
+    public ResponseEntity<AppointmentScheduledResponse> scheduleAppointment(
+            @RequestBody @Valid final AppointmentScheduleRequest request){
+
         var entity = mapper.toEntity(request);
         var savedEntity = service.schedule(entity);
-        return mapper.toSaveResponse(savedEntity);
+        var response = mapper.toSaveResponse(savedEntity);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping("{id}")
-    public DetailsAppointmentResponse findById(@PathVariable final Long id){
+    public ResponseEntity<DetailsAppointmentResponse> getAppointmentDetails(
+            @PathVariable final Long id){
+
         var entity = queryService.findById(id);
-        return mapper.toDetailsResponse(entity);
+        var response = mapper.toDetailsResponse(entity);
+
+        return ResponseEntity.ok(response);
     }
 
     @PutMapping("{id}")
-    public AppointmentRescheduleResponse update(@PathVariable final Long id, @RequestBody @Valid final AppointmentRescheduleRequest request){
+    public ResponseEntity<AppointmentRescheduleResponse> rescheduleAppointment(
+            @PathVariable final Long id,
+            @RequestBody @Valid final AppointmentRescheduleRequest request){
+
         var entity = mapper.toEntity(id, request);
         var updatedEntity = service.reschedule(entity);
-        return mapper.toRescheduleResponse(updatedEntity);
+        var response = mapper.toRescheduleResponse(updatedEntity);
+
+        return ResponseEntity.ok(response);
     }
 
     @PutMapping("{id}/cancellation")
-    public AppointmentCancellationResponse cancel(@PathVariable final Long id, @RequestBody @Valid final AppointmentCancellationRequest request){
+    public ResponseEntity<AppointmentCancellationResponse> cancelAppointment(
+            @PathVariable final Long id,
+            @RequestBody @Valid final AppointmentCancellationRequest request){
+
         var entity = mapper.toEntity(id, request);
         var updatedEntity = service.cancelAppointment(entity);
-        return mapper.toCancellationResponse(updatedEntity);
+        var response = mapper.toCancellationResponse(updatedEntity);
+
+        return ResponseEntity.ok(response);
     }
 
 }

@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import personal.GesundKlinik.modules.patient.dto.request.SavePatientRequest;
@@ -18,15 +20,12 @@ import personal.GesundKlinik.modules.patient.service.IPatientService;
 
 import java.util.List;
 
-import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.NO_CONTENT;
-
 
 @RestController
 @RequestMapping("/patients")
-@Tag(name = "Patients")
 @RequiredArgsConstructor
 @SecurityRequirement(name = "bearer-key")
+@Tag(name = "Patients")
 public class PatientController {
 
     private final IPatientService service;
@@ -35,43 +34,59 @@ public class PatientController {
 
 
     @PostMapping
-    @ResponseStatus(CREATED)
-    public SavePatientResponse save(@RequestBody @Valid final SavePatientRequest request){
+    public ResponseEntity<SavePatientResponse> registerPatient(
+            @RequestBody @Valid final SavePatientRequest request){
+
         var entity = mapper.toEntity(request);
         var savedEntity = service.save(entity);
-        return mapper.toSaveResponse(savedEntity);
+        var response = mapper.toSaveResponse(savedEntity);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
 
     @GetMapping("{id}")
-    public DetailPatientResponse findById(@PathVariable final Long id){
+    public ResponseEntity<DetailPatientResponse> getPatientDetails(@PathVariable final Long id){
         var entity = queryService.findById(id);
-        return mapper.toDetailResponse(entity);
+        var response = mapper.toDetailResponse(entity);
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/page")
-    public Page<PagePatientResponse> listPaged(@PageableDefault(size = 10, sort = "name") Pageable pageable) {
+    public ResponseEntity<Page<PagePatientResponse>> listPaged(
+            @PageableDefault(size = 10, sort = "name") Pageable pageable) {
+
         var page = queryService.listPaged(pageable);
-        return page.map(mapper::toPageResponse);
+        var response = page.map(mapper::toPageResponse);
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping
-    public List<ListPatientResponse> listAll(){
+    public  ResponseEntity<List<ListPatientResponse>> listAllPatients(){
         var entities = queryService.list();
-        return mapper.toListResponse(entities);
+        var response = mapper.toListResponse(entities);
+
+        return ResponseEntity.ok(response);
     }
 
     @PutMapping("{id}")
-    public UpdatePatientResponse update(@PathVariable final Long id, @RequestBody @Valid final UpdatePatientRequest request){
+    public ResponseEntity<UpdatePatientResponse> updatePatient(
+            @PathVariable final Long id,
+            @RequestBody @Valid final UpdatePatientRequest request){
+
         var entity = mapper.toEntity(id, request);
         var updatedEntity = service.update(entity);
-        return mapper.toUpdateResponse(updatedEntity);
+        var response = mapper.toUpdateResponse(updatedEntity);
+
+        return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping("{id}")
-    @ResponseStatus(NO_CONTENT)
-    public void delete(@PathVariable final Long id){
+    @PutMapping("{id}/deactivation")
+    public ResponseEntity<Void> deactivatePatient(@PathVariable final Long id) {
         service.softDelete(id);
+        return ResponseEntity.noContent().build();
     }
 
 }

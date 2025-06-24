@@ -54,6 +54,7 @@ class DoctorServiceTest {
         @DisplayName("Should save a new doctor when email and phone are valid")
         void shouldSaveDoctor_whenEmailAndPhoneAreValid() {
             // ARRANGE
+            doctor.setId(null);
             when(repository.save(doctor)).thenReturn(doctor);
 
             // ACT
@@ -72,6 +73,7 @@ class DoctorServiceTest {
         @DisplayName("Should throw EmailInUseException when email is already in use")
         void shouldThrowEmailInUseException_whenEmailAlreadyUsed() {
             // ARRANGE
+            doctor.setId(null);
             doThrow(new EmailInUseException("This email is already in use"))
                     .when(queryService).verifyEmail(doctor.getEmail());
 
@@ -92,6 +94,7 @@ class DoctorServiceTest {
         @DisplayName("Should throw PhoneInUseException when phone is already in use")
         void shouldThrowPhoneInUseException_whenPhoneAlreadyUsed() {
             // ARRANGE
+            doctor.setId(null);
             doNothing().when(queryService).verifyEmail(doctor.getEmail());
             doThrow(new PhoneInUseException("This phone is already in use"))
                     .when(queryService).verifyPhone(doctor.getPhone());
