@@ -9,8 +9,8 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>personal</groupId>
-	<artifactId>GesundKlinik</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<artifactId>gesundklinik-api</artifactId>
+	<version>1.0.0</version>
 	<name>GesundKlinik</name>
 	<description>RESTful API for managing patient and doctor records, and scheduling medical appointments.</description>
 	<url/>
@@ -129,6 +129,12 @@
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 
 	</dependencies>
