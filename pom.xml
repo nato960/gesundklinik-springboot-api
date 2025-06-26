@@ -47,7 +47,7 @@
 		<dependency>
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-core</artifactId>
-			<version>10.14.0</version>
+			<version>10.20.1</version>
 		</dependency>
 <!--		<dependency>-->
 <!--			<groupId>org.flywaydb</groupId>-->
@@ -190,7 +190,7 @@
 				<dependency>
 					<groupId>org.flywaydb</groupId>
 					<artifactId>flyway-mysql</artifactId>
-					<version>10.14.0</version>
+					<version>10.20.1</version>
 				</dependency>
 			</dependencies>
 		</profile>
