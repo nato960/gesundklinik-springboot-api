@@ -2,6 +2,7 @@
 ![Java](https://img.shields.io/badge/Java-17+-blue?logo=java)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.0-brightgreen?logo=spring)
 ![Status](https://img.shields.io/badge/status-in%20development-yellow)
+<a href="https://gesundklinik-springboot-api.onrender.com/swagger-ui/index.html" target="_blank"><img src="https://img.shields.io/badge/Swagger%20UI-Online-brightgreen?logo=swagger" /></a>
 
 
 GesundKlinik is a clinical appointment scheduling system built with Java and Spring Boot, applying Clean Architecture and Domain-Driven Design (DDD) principles to ensure a modular, testable, and maintainable codebase.
@@ -9,6 +10,8 @@ GesundKlinik is a clinical appointment scheduling system built with Java and Spr
 The application provides endpoints for managing doctors, patients, and appointments through a RESTful API. Business rules are enforced with robust validation logic using the Chain of Responsibility (CoR) pattern. It also follows the Command Query Separation (CQS) principle, cleanly separating write operations (commands) from read operations (queries), promoting a clean and organized service structure.
 
 Its layered and modular design ensures a clear separation of concerns, while security is handled via JWT and Spring Security. Full API documentation is available through Swagger (SpringDoc OpenAPI).
+
+📘 [View API Documentation (Swagger UI)](https://gesundklinik-springboot-api.onrender.com/swagger-ui/index.html)
 
 ---
 
