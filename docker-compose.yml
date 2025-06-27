@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15.4
+    container_name: gesundklinik-db
+    restart: always
+    environment:
+      POSTGRES_DB: ${DATASOURCE_DB}
+      POSTGRES_USER: ${DATASOURCE_USER}
+      POSTGRES_PASSWORD: ${DATASOURCE_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - gesund_data:/var/lib/postgresql/data
+    networks:
+      - gesund-network
+
+volumes:
+  gesund_data:
+
+networks:
+  gesund-network:

@@ -17,6 +17,9 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: false
 
+  flyway:
+          enabled: false
+
   logging:
     level:
       org.springframework.security: WARN
